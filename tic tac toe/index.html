@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@700&display=swap" rel="stylesheet">
+  <style>
+    /* Reset and base styles */
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      font-family: "Raleway", sans-serif;
+    }
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #FF5733, #33FF57, #3357FF);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .wrapper {
+      display: flex;
+      align-items: flex-start;
+      gap: 2em;
+    }
+    .scoreboard {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 1em;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      width: 260px;
+    }
+    h2 {
+      color: black;
+      text-align: center;
+      margin-bottom: 1em;
+      font-size: 1.5em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead th {
+      background-color: #000000;
+      color: #ffffff;
+      padding: 0.5em;
+      text-align: center;
+      font-size: 1.2em;
+    }
+    tbody td {
+      background-color: #f0f0f0;
+      color: #333;
+      padding: 0.5em;
+      text-align: center;
+      font-size: 1.2em;
+    }
+    .controls {
+      text-align: center;
+      margin-top: 1em;
+    }
+    .popup {
+      background: linear-gradient(135deg, #8052ec, #d161ff);
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      display: flex;
+      z-index: 2;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 1em;
+      font-size: 12vmin;
+    }
+    #message {
+      color: #ffffff;
+      text-align: center;
+      font-size: 1em;
+    }
+    .popup.hide {
+      display: none;
+    }
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border-radius: 8px;
+      padding: 1em;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    .game-title {
+      margin-bottom: 2em;
+    }
+    .game-title h1 {
+      color: #00ffb3;
+      font-size: 3em;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    .container {
+      width: 70vmin;
+      height: 70vmin;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2vmin;
+    }
+    .button-option {
+      background: #ffffff;
+      height: 22vmin;
+      width: 22vmin;
+      border: none;
+      border-radius: 8px;
+      font-size: 12vmin;
+      color: #d161ff;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    .button-option .inner-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 80%;
+      width: 80%;
+      background-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 6vmin;
+    }
+    .controls button {
+      font-size: 1.3em;
+      padding: 1em;
+      border-radius: 8px;
+      background-color: #0a0027;
+      color: #ffffff;
+      border: none;
+      margin: 0.5em;
+    }
+    #new-game {
+      background-color: #d161ff;
+    }
+    #restart {
+      background-color: #007bff;
+    }
+    #toggle-mode {
+      background-color: #ffcc00;
+    }
+    #adjust-color {
+      background-color: #ff5722;
+    }
+    #select-emoji {
+      background-color: #4caf50;
+    }
+    .color-picker {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 1em;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      display: none;
+      z-index: 999;
+    }
+    .color-option {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      margin: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .color-option:nth-child(1) {
+      background: linear-gradient(135deg, #FF5733, #33FF57, #3357FF);
+    }
+    .color-option:nth-child(2) {
+      background: linear-gradient(135deg, #FF33A6, #A633FF, #33FFF2);
+    }
+    .color-option:nth-child(3) {
+      background: linear-gradient(135deg, #33FF57, #3357FF, #FF33A6);
+    }
+    .color-picker-buttons {
+      text-align: center;
+      margin-top: 1em;
+    }
+    .color-picker-buttons button {
+      font-size: 1em;
+      padding: 0.5em 1em;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: #ffffff;
+      border: none;
+      margin: 0.5em;
+    }
+    .emoji-picker {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 1em;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      display: none;
+      z-index: 999;
+    }
+    .emoji-option {
+      display: inline-block;
+      font-size: 2em;
+      margin: 10px;
+      cursor: pointer;
+      text-align: center;
+      position: relative;
+      padding: 10px;
+    }
+    .emoji-option.selected::before {
+      content: "•";
+      font-size: 1.5em;
+      color: red;
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .emoji-picker-buttons {
+      text-align: center;
+      margin-top: 1em;
+    }
+    .emoji-picker-buttons button {
+      font-size: 1em;
+      padding: 0.5em 1em;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: #ffffff;
+      border: none;
+      margin: 0.5em;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="game-container">
+      <div class="controls">
+        <button id="adjust-color">Adjust Color</button>
+        <button id="select-emoji">Select Emojis</button>
+        <button id="new-game">New Game</button>
+        <button id="restart">Restart Scores</button>
+        <button id="toggle-mode">Play with Bot</button>
+      </div>
+      <div class="game-title">
+        <h1>Tic Tac Toe</h1>
+      </div>
+      <div class="container">
+        <!-- The 9 slots for the game board -->
+        <button class="button-option"><span class="inner-box"></span></button>
+        <button class="button-option"><span class="inner-box"></span></button>
+        <button class="button-option"><span class="inner-box"></span></button>
+        <button class="button-option"><span class="inner-box"></span></button>
+        <button class="button-option"><span class="inner-box"></span></button>
+        <button class="button-option"><span class="inner-box"></span></button>
+        <button class="button-option"><span class="inner-box"></span></button>
+        <button class="button-option"><span class="inner-box"></span></button>
+        <button class="button-option"><span class="inner-box"></span></button>
+      </div>
+    </div>
+    <div class="scoreboard">
+      <h2>Scoreboard</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="playerX">Player X</td>
+            <td id="playerXScore">0</td>
+          </tr>
+          <tr>
+            <td id="playerO">Player O</td>
+            <td id="playerOScore">0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div id="color-picker" class="color-picker">
+    <div class="color-option" data-colors="linear-gradient(135deg, #FF5733, #33FF57, #3357FF)"></div>
+    <div class="color-option" data-colors="linear-gradient(135deg, #FF33A6, #A633FF, #33FFF2)"></div>
+    <div class="color-option" data-colors="linear-gradient(135deg, #33FF57, #3357FF, #FF33A6)"></div>
+    <div class="color-picker-buttons">
+      <button id="cancel-color">Cancel</button>
+    </div>
+  </div>
+  <div id="emoji-picker" class="emoji-picker">
+    <div class="emoji-option">😊</div>
+    <div class="emoji-option">😎</div>
+    <div class="emoji-option">🤖</div>
+    <div class="emoji-option">👽</div>
+    <div class="emoji-option">👻</div>
+    <div class="emoji-option">👾</div>
+    <div class="emoji-option">🤡</div>
+    <div class="emoji-option">🎃</div>
+    <div class="emoji-option">🐱</div>
+    <div class="emoji-option">🐶</div>
+    <div class="emoji-option">🦊</div>
+    <div class="emoji-option">🐼</div>
+    <div class="emoji-option">🦄</div>
+    <div class="emoji-option">🐷</div>
+    <div class="emoji-option">🐸</div>
+    <div class="emoji-picker-buttons">
+      <button id="confirm-emojis">Confirm</button>
+      <button id="cancel-emoji">Cancel</button>
+    </div>
+  </div>
+  <div id="popup" class="popup hide">
+    <span id="message"></span>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
